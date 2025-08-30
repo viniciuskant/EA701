@@ -16,6 +16,13 @@ class LedRGB:
         self.set(0,0,0)
 
 led = LedRGB()
-led.set(1,0,0)  # vermelho
-time.sleep(1)
-led.off()
+
+while True:
+    start_time = time.ticks_ms()  # Marca o tempo inicial
+    led.set(1,0,0)  # vermelho
+    time.sleep(1)
+    led.off()
+    end_time = time.ticks_ms()  # Marca o tempo final
+
+    elapsed_time = time.ticks_diff(end_time, start_time)  # Calcula a diferença
+    print(f"Tempo desde ligar até desligar: {elapsed_time} ms")
