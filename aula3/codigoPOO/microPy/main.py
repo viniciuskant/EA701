@@ -1,20 +1,21 @@
 from machine import Pin
 import time
 
-led = Pin(13, Pin.OUT)
-N = 5
+class LedRGB:
+    def __init__(self, r=13, g=11, b=12):
+        self.r = Pin(r, Pin.OUT)
+        self.g = Pin(g, Pin.OUT)
+        self.b = Pin(b, Pin.OUT)
 
-while True:
-    total_time = 0
-    for i in range(N):
-        start_time = time.ticks_us()
-        
-        led.value(1)
-        time.sleep(0.5)
-        led.value(0)
-        time.sleep(0.5)
-        
-        end_time = time.ticks_us()
-        total_time += time.ticks_diff(end_time, start_time)
+    def set(self, r=0, g=0, b=0):
+        self.r.value(r)
+        self.g.value(g)
+        self.b.value(b)
 
-    print("Tempo do loop:", total_time / N - 1000000, "us")
+    def off(self):
+        self.set(0,0,0)
+
+led = LedRGB()
+led.set(1,0,0)  # vermelho
+time.sleep(1)
+led.off()
