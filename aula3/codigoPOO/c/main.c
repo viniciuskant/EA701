@@ -1,4 +1,7 @@
 #include "pico/stdlib.h"
+#include "pico/time.h"
+#include "stdio.h"
+
 
 typedef struct {
     uint r, g, b;
@@ -19,9 +22,21 @@ int main(){
     stdio_init_all();
     LedRGB led;
     led_init(&led, 13, 11, 12);
-
-    led_set(&led,1,0,0); sleep_ms(500);
-    led_set(&led,0,1,0); sleep_ms(500);
-    led_set(&led,0,0,1); sleep_ms(500);
-    led_set(&led,0,0,0);
+    while (true)
+    {
+        /* code */
+        
+        absolute_time_t start_time = get_absolute_time();
+        
+        led_set(&led,1,0,0); sleep_ms(500);
+        led_set(&led,0,1,0); sleep_ms(500);
+        
+        absolute_time_t end_time = get_absolute_time();
+        
+        printf("Tempo médio para ligar e desligar o LED: %u us\n", (end_time - start_time));
+        
+        
+        led_set(&led,0,0,1); sleep_ms(500);
+        led_set(&led,0,0,0);
+    }
 }
