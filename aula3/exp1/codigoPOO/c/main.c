@@ -21,18 +21,21 @@ void led_set(LedRGB* L, bool r, bool g, bool b){
 int main(){
     stdio_init_all();
     LedRGB led;
-    led_init(&led, 13, 11, 12);
+    led_init(&led, 13, 13, 13);
+    while (true)
+    {
+        /* code */
+        
+        absolute_time_t start_time = get_absolute_time();
+        
+        led_set(&led,1,0,0); sleep_ms(500);
+        led_set(&led,0,1,0); sleep_ms(500);
+        
+        absolute_time_t end_time = get_absolute_time();
 
-    absolute_time_t start_time = get_absolute_time();
+        printf("Tempo médio para ligar e desligar o LED: %lld us\n", absolute_time_diff_us(start_time,end_time) - 1000000);
 
-    led_set(&led,1,0,0); sleep_ms(500);
-    led_set(&led,0,1,0); sleep_ms(500);
-    
-    absolute_time_t end_time = get_absolute_time();
-    
-    printf("Tempo médio para ligar e desligar o LED: %u us\n", (end_time - start_time) - 2000000);
-
-
-    led_set(&led,0,0,1); sleep_ms(500);
-    led_set(&led,0,0,0);
+        led_set(&led,0,0,1); sleep_ms(500);
+        led_set(&led,0,0,0);
+    }
 }
