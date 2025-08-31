@@ -51,6 +51,7 @@ int main() {
     int status_led[3] = {0, 1, 0};
     int last_state[3] = {0, 0, 0};
     int pin_BUTTON[3] = {BUTTON_R, BUTTON_G, BUTTON_B};
+    
     while (1) {
         for (int i = 0; i < 3; i++)
             status_led[i] = button_controller(pin_BUTTON[i], status_led[i], &last_state[i]);
