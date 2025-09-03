@@ -47,6 +47,7 @@ pico_enable_stdio_uart(main 0)
 
 target_link_libraries(main
         hardware_pwm
+        hardware_adc
         pico_stdlib)
 
 target_include_directories(main PRIVATE
