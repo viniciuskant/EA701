@@ -10,6 +10,9 @@
 #define BOTAO_B 6
 #define BOTAO_C 10
 
+#define INCREMENTO_DUTY 0.1
+#define MOD_DUTY 10
+
 
 #define JOYSTICK_Y 26
 #define JOYSTICK_X 27
@@ -22,8 +25,6 @@ void setup(){
     gpio_init(BOTAO_A); gpio_set_dir(BOTAO_A, GPIO_IN); gpio_pull_up(BOTAO_A);
     gpio_init(BOTAO_B); gpio_set_dir(BOTAO_B, GPIO_IN); gpio_pull_up(BOTAO_B);
     gpio_init(BOTAO_C); gpio_set_dir(BOTAO_C, GPIO_IN); gpio_pull_up(BOTAO_C);
-
-
 
 }
 
@@ -60,11 +61,15 @@ int main(){
     uint channel = pwm_gpio_to_channel(GPIO_14);
     gpio_set_function(GPIO_14, GPIO_FUNC_PWM);
 
-    int status_botao = 0, last_state = 0, freq = 0;
+    int status_botao[2] = {0, 0}, last_state[2] = {0, 0}, freq = 0;
+    float duty = 0;
     
     while (true) {
-        button_controller(BOTAO_A, &status_botao, &last_state);
-        freq = status_botao * 1000; 
-        configure_pwm(slice_num, channel, freq, 0.5); // Increment frequency by 1 kHz per click, 50% duty cycle
+        button_controller(BOTAO_A, &status_botao[0], &last_state[0]);
+        button_controller(BOTAO_B, &status_botao[1], &last_state[1]);
+        freq = status_botao[0] * 1000; 
+        status_botao[1] = status_botao[1] % MOD_DUTY;
+        duty = status_botao[1] * INCREMENTO_DUTY; 
+        configure_pwm(slice_num, channel, freq, duty);
     }
 }
