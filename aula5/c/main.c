@@ -79,6 +79,53 @@ int button_controller(uint pin, int *status, int *last_state, int incremento, in
 
 
 
+// int main(){
+//     stdio_init_all();
+//     adc_init();
+//     setup_pin();
+
+//     uint slice_num = pwm_gpio_to_slice_num(GPIO_14);
+//     uint channel = pwm_gpio_to_channel(GPIO_14);
+//     gpio_set_function(GPIO_14, GPIO_FUNC_PWM);
+
+//     int status_button[5], last_state[5], freq = 0;
+//     for (int i = 0; i < 5; i++){
+//         status_button[i] = 0;
+//         last_state[i] = 0;
+//     }
+
+//     float duty = 0;
+//     int counter = 0;
+
+//     while (true) {
+//         button_controller(BOTAO_A, &status_button[0], &last_state[0], status_button[3] % 2, 50);
+//         button_controller(BOTAO_B, &status_button[1], &last_state[1], status_button[3] % 2, 50);
+//         button_controller(BOTAO_C, &status_button[2], &last_state[2], 1, 50);
+//         button_controller(JOYSTICK_B, &status_button[3], &last_state[3], 1, 50);
+        
+//         button_controller(GPIO_16, &status_button[4], &last_state[4], 1, 0);
+        
+        
+//         if (status_button[2] % 2) {
+//             freq = read_analog(JOYSTICK_X);
+//             duty = (float)read_analog(JOYSTICK_Y) / 4096.0;
+//         }
+//         if (duty + status_button[1] * INCREMENTO_DUTY >= 1)
+//             status_button[1] = 0;
+
+//         configure_pwm(slice_num, channel, freq + status_button[0] * 100, duty + status_button[1] * INCREMENTO_DUTY);
+
+
+//         static absolute_time_t last_print_time = {0};
+//         if (absolute_time_diff_us(last_print_time, get_absolute_time()) >= 1000000) {
+//             printf("Duty Cycle: %.2f, Frequency: %d, GPIO Frequency: %d\n", duty + status_button[1] * INCREMENTO_DUTY, freq, status_button[4] - counter);
+//             last_print_time = get_absolute_time();
+//             counter = status_button[4];
+//         }
+//     }
+// }
+
+
 int main(){
     stdio_init_all();
     adc_init();
@@ -88,39 +135,28 @@ int main(){
     uint channel = pwm_gpio_to_channel(GPIO_14);
     gpio_set_function(GPIO_14, GPIO_FUNC_PWM);
 
-    int status_button[5], last_state[5], freq = 0;
-    for (int i = 0; i < 5; i++){
-        status_button[i] = 0;
-        last_state[i] = 0;
-    }
+    int freq = 160;
 
     float duty = 0;
     int counter = 0;
 
-    while (true) {
-        button_controller(BOTAO_A, &status_button[0], &last_state[0], status_button[3] % 2, 50);
-        button_controller(BOTAO_B, &status_button[1], &last_state[1], status_button[3] % 2, 50);
-        button_controller(BOTAO_C, &status_button[2], &last_state[2], 1, 50);
-        button_controller(JOYSTICK_B, &status_button[3], &last_state[3], 1, 50);
-        
-        button_controller(GPIO_16, &status_button[4], &last_state[4], 1, 0);
-        
-        
-        if (status_button[2] % 2) {
-            freq = read_analog(JOYSTICK_X);
-            duty = (float)read_analog(JOYSTICK_Y) / 4096.0;
-        }
-        if (duty + status_button[1] * INCREMENTO_DUTY >= 1)
-            status_button[1] = 0;
+    int status_button, last_state;
 
-        configure_pwm(slice_num, channel, freq + status_button[0] * 100, duty + status_button[1] * INCREMENTO_DUTY);
+    while (true) {       
+        duty += 0.1;
+        if (duty > 1.09)
+            duty = 0;
 
-
+        configure_pwm(slice_num, channel, freq, duty);
+        
+        button_controller(GPIO_16, &status_button, &last_state, 1, 0);
+        
         static absolute_time_t last_print_time = {0};
         if (absolute_time_diff_us(last_print_time, get_absolute_time()) >= 1000000) {
-            printf("Duty Cycle: %.2f, Frequency: %d, GPIO Frequency: %d\n", duty + status_button[1] * INCREMENTO_DUTY, freq, status_button[4] - counter);
+            printf("Duty Cycle: %.2f, Frequency: %d, GPIO Frequency: %d\n", duty, freq, status_button - counter);
             last_print_time = get_absolute_time();
-            counter = status_button[4];
+            counter = status_button;
         }
+        sleep_ms(10000);
     }
 }
