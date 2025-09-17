@@ -135,17 +135,17 @@ int main(){
     uint channel = pwm_gpio_to_channel(GPIO_14);
     gpio_set_function(GPIO_14, GPIO_FUNC_PWM);
 
-    int freq = 160;
+    int freq = 100;
 
-    float duty = 0;
+    float duty = 0.5;
     int counter = 0;
 
     int status_button, last_state;
 
     while (true) {       
-        duty += 0.1;
-        if (duty > 1.09)
-            duty = 0;
+        // duty += 0.1;
+        // if (duty > 1.09)
+        //     duty = 0;
 
         configure_pwm(slice_num, channel, freq, duty);
         
@@ -157,6 +157,6 @@ int main(){
             last_print_time = get_absolute_time();
             counter = status_button;
         }
-        sleep_ms(10000);
+        sleep_ms(30000);
     }
 }
